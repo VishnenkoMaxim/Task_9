@@ -1,41 +1,44 @@
-#include "all.h"
+
+#include <iostream>
+#include <fstream>
+#include <utility>
+#include <cstring>
+#include <string>
+#include <thread>
+#include <future>
+#include <vector>
 
 #include "async.h"
 
-#include <list>
+using namespace std;
 
-unsigned short N;
-list<string> commands;
-
-void Thread(){
-    unsigned int context = Connect(N);
+void func(int commands_bulk, const vector<string> &commands){
+    int res = connect(commands_bulk);
 
     for(const auto &it : commands){
-        Receive(it.c_str(), it.size(), context);
+        auto status = receive(it.c_str(), it.length(), res);
+        if (status != 0) cout << "ERR" << endl;
     }
 
-    Disconnect(context);
+    disconnect(res);
 }
 
-int main(int argc, char  **argv) {
-    if (argc < 2){
-        N = 3;
-    } else N = atoi(argv[1]);
+int main() {
+    string str;
+    vector<string> vec;
 
-    while(true){
-        if (cin.eof()){
-            break;
-        }
-        string cmd;
-        cin >> cmd;
-        commands.push_back(cmd);
+    while(!cin.eof()){
+        cin >> str;
+        vec.push_back(str);
     }
 
-    thread th{Thread};
-    thread th2{Thread};
+    std::thread th1(func, 25, vec);
+    std::thread th2(func, 50, vec);
+    std::thread th3(func, 5, vec);
 
-    th.join();
+    th1.join();
     th2.join();
+    th3.join();
 
     return 0;
 }

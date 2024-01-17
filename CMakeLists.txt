@@ -12,7 +12,7 @@ include_directories(headers)
 link_directories(/usr/local/lib)
 link_directories(${CMAKE_BINARY_DIR})
 
-add_library(async SHARED src/console.cpp src/log.cpp src/commands.cpp src/async.cpp)
+add_library(async SHARED src/async.cpp)
 add_executable(test_lib main.cpp)
 
 target_link_libraries(test_lib PRIVATE stdc++ m async)
